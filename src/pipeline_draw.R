@@ -19,13 +19,13 @@ all_mat <- res$all_mat
 group_info <- res$group_info
 group_name <- res$group_name
 pre_define <- res$pre_define
-###################### haplotype imputation
-res_trace <- HapICE.impute_Haplotype(all_mat=all_mat,
+###################### haplotype inference
+res_trace <- HapICE.infer_Haplotype(all_mat=all_mat,
                         group_info=group_info,
                         top_each=3)
 ########################### plot output
 pdf(output_pdf,width=5,height = 4)
-HapICE.plot_imputeHaplotype(res_trace,prob_thre=0.01,
+HapICE.plot_inferHaplotype(res_trace,prob_thre=0.01,
                             group_name=group_name)
 HapICE.plot_adjacentCombination(all_mat,remove_char='.',
            group_info=group_info,

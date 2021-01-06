@@ -300,7 +300,7 @@ HapICE.plot_adjacentCombination <- function(all_mat,top_n=3,each_width=0.25,
 }
 
 ###########################################
-#' Summarize imputation results. 
+#' Summarize inference results. 
 #'
 #' \code{HapICE.summ_readsComponent} plot reads component for each position.
 #'
@@ -346,7 +346,7 @@ HapICE.summ_readsComponent <- function(all_mat,group_info,group_name){
 }
 
 ###########################################
-## funcitons for HapICE.impute_Haplotype()
+## funcitons for HapICE.infer_Haplotype()
 get_valid <- function(all_mat,x,remove_character='.'){
   all_mat[which(all_mat[,x]!=remove_character),]
 }
@@ -390,14 +390,14 @@ compare_twoSeq_count <- function(x1,x2,min_overlap=2,remove_character='.'){ # x1
 
 
 ###########################################
-#' Impute for haplotype
+#' infer for haplotype
 #'
-#' \code{HapICE.impute_Haplotype} perform imputation for haplotypes. 
+#' \code{HapICE.infer_Haplotype} perform inference for haplotypes. 
 #'
 #' @param all_mat data.frame, read-region content matrix with interested positions.
 #' @param group_info data.frame, sequence context at each position for parental and pseudogene. 
 #' @param top_each, numeric, number of top haplotypes to leave at each step. Default is 3.
-#' @param use_site, character, if not NULL, only impute for the input sites. Default is NULL. 
+#' @param use_site, character, if not NULL, only infer for the input sites. Default is NULL. 
 #' @param min_overlap, numeric, minimun matching_score for a read assigned to a haplotype. Default is 2.  
 #' @param check_thre, numeric, threshold for the remaining possibility when only consider top_each haplotypes at each step. 
 #' If the remaining possibility is higher than check_thre, we will include more haplotypes until the remaining is possibility less than check_thre. 
@@ -413,12 +413,12 @@ compare_twoSeq_count <- function(x1,x2,min_overlap=2,remove_character='.'){ # x1
 #'
 #' @examples
 #' \dontrun{
-#' res_trace <- HapICE.impute_Haplotype(all_mat=all_mat,
+#' res_trace <- HapICE.infer_Haplotype(all_mat=all_mat,
 #'                                     group_info=group_info,
 #'                                     top_each=3)
 #' }
 #' @export
-HapICE.impute_Haplotype <- function(all_mat,group_info,use_site=NULL,
+HapICE.infer_Haplotype <- function(all_mat,group_info,use_site=NULL,
                          min_overlap=2,check_thre=0.05,top_each=3,
                          adjust_per=TRUE,perm_k=5000,perm_strategy='frequency',
                          remove_char='.',min_diff=1e-30,min_frequency=0.01){
@@ -556,11 +556,11 @@ HapICE.impute_Haplotype <- function(all_mat,group_info,use_site=NULL,
 
 
 ###########################################
-#' Plot for imputation results
+#' Plot for inference results
 #'
-#' \code{HapICE.plot_imputeHaplotype} plot the imputation results. 
+#' \code{HapICE.plot_inferHaplotype} plot the inference results. 
 #'
-#' @param result_t list, output object from HapICE.impute_Haplotype(). 
+#' @param result_t list, output object from HapICE.infer_Haplotype(). 
 #' @param prob_thre, numeric, threshold for the haplotype frequency to show. Default is 0.01.
 #' @param group_name character, genome position for each interested positions. 
 #' @param consider_site_per logical, whether to display each site according to the possibility at each step. 
@@ -568,11 +568,11 @@ HapICE.impute_Haplotype <- function(all_mat,group_info,use_site=NULL,
 #'
 #' @examples
 #' \dontrun{
-#'       HapICE.plot_imputeHaplotype(res_trace,prob_thre=0.01,
+#'       HapICE.plot_inferHaplotype(res_trace,prob_thre=0.01,
 #'                           group_name=group_name)
 #' }
 #' @export
-HapICE.plot_imputeHaplotype <- function(result_t,prob_thre=0.01,group_name=NULL,
+HapICE.plot_inferHaplotype <- function(result_t,prob_thre=0.01,group_name=NULL,
                               consider_site_per=FALSE){
   par(mar=c(2,2,5,8))
   if(consider_site_per==TRUE){
@@ -663,7 +663,7 @@ HapICE.plot_imputeHaplotype <- function(result_t,prob_thre=0.01,group_name=NULL,
 #'
 #' \code{HapICE.cal_siteProb} calculate allele frequency for each site.
 #'
-#' @param final_t list, one list object from HapICE.impute_Haplotype(). 
+#' @param final_t list, one list object from HapICE.infer_Haplotype(). 
 #'
 #' @examples
 #' \dontrun{
@@ -698,7 +698,7 @@ HapICE.cal_siteProb <- function(final_t){
 #' \code{HapICE.output_result} output result statistics to text files. 
 #' 
 #' @param res_readsComponent list, object from HapICE.summ_readsComponent(). 
-#' @param res_finalHaplotype list, one list object from HapICE.impute_Haplotype(). 
+#' @param res_finalHaplotype list, one list object from HapICE.infer_Haplotype(). 
 #' @param group_name character, genome position for each interested positions. 
 #' @param output_file character, output file name. 
 #'
