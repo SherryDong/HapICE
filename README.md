@@ -1,6 +1,6 @@
 # HapICE V1.0
 
-HapICE (Haplotype Inference for Pseudogene-mediated conversion events based on short-read next-generation sequencing data) is a solution started from the general short-read NGS BAM files and dedicated to imputing the genomic haplotypes of functional/pseudogene pairs that have highly-homologous sequences and gene conversion events frequently occurred, along with result visualization including imputed haplotype, the proportion of gene recombination events between two neighboring informative mutations, and specific reads information. 
+HapICE (Haplotype Inference for Pseudogene-mediated conversion events based on short-read next-generation sequencing data) is a solution started from the general short-read NGS BAM files and dedicated to inferring the genomic haplotypes of functional/pseudogene pairs that have highly-homologous sequences and gene conversion events frequently occurred, along with result visualization including inferred haplotype, the proportion of gene recombination events between two neighboring informative mutations, and specific reads information. 
 
 
 # Require
@@ -19,7 +19,7 @@ HapICE (Haplotype Inference for Pseudogene-mediated conversion events based on s
 
 # Demo
 
-HapICE performs haplotype imputation followed by three main steps: (1) prepare gene-specific reference, (2) generate reads-region mapping content matrix, and (3) functional/pseudogene haplotype imputation and result visualization 
+HapICE performs haplotype inference followed by three main steps: (1) prepare gene-specific reference, (2) generate reads-region mapping content matrix, and (3) functional/pseudogene haplotype inference and result visualization 
 
 ### Demos script for all of the process.
 demo.sh
@@ -36,7 +36,7 @@ demo.sh
   
   # 
 
-+ Part III: functional/pseudogene haplotype imputation and result visualization 
++ Part III: functional/pseudogene haplotype inference and result visualization 
 
   Step3_demo.R
   
