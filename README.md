@@ -42,7 +42,9 @@ demo.sh
   
   Rscript src/pipeline_draw.R
   
-  usage: Rscript src/pipeline_draw.R <read-region matrix> <combine_mod_region.bed> <combine_mod.info> <interested position> <output pdf file name> <output txt file name>
+  usage: Rscript src/pipeline_draw.R <read-region matrix> <combine_mod_region.bed> \
+    <combine_mod.info> <interested position> \
+    <output pdf file name> <output txt file name>
 
 # Reference
 
