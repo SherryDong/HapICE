@@ -27,6 +27,9 @@ HapICE.prepare_dataset <- function(mat=NULL,mod_region=NULL,mod_info=NULL,int_po
   int_pos <- as.numeric(unlist(strsplit(int_pos,',')))
   int_region <- sprintf('TID_%s',int_pos)
   r1 <- mod_region; d1 <- mat; f1 <- mod_info;
+	w1 <- which(int_region %in% r1$V4)
+	int_pos <- int_pos[w1]; int_region <- int_region[w1]
+	if(length(w1)==0) stop('no matched interesting position !')
   r1$colname <- r1$V4
   r1$colname <- gsub('-','.',r1$colname)
   rownames(r1) <- r1$colname
