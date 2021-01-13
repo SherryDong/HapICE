@@ -42,5 +42,8 @@ demo.sh
   
   Rscript src/pipeline_draw.R
 
+# docker image
+docker pull jargene/hapice:1.0
+
 # Reference
 
