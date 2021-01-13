@@ -48,4 +48,4 @@ docker pull jargene/hapice:1.0
 docker run -d -t -i docker.io/jargene/hapice:1.0 "/bin/bash"
 
 # Reference
-
+Liu et.al. HapICE: Haplotype Inference for Pseudogene-mediated conversion events based on next-generation sequencing data. Submitted
