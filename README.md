@@ -44,6 +44,8 @@ demo.sh
 
 # docker image
 docker pull jargene/hapice:1.0
+#usage
+docker run -d -t -i docker.io/jargene/hapice:1.0 "/bin/bash"
 
 # Reference
 
