@@ -15,10 +15,20 @@ ref_annot='db/hg19_refGene.txt' ##
 
 # Step1: prepare gene-specific reference
 perl src/gene2fa_combine.pl $parental_gene,$pseudo_gene $combine_ref_dir $ref_fa $ref_annot
-# optional, if manually prepare bed file ($ref_annot is not required)
+
+### optinals for the first step
+## optinal I, use GENCODE annotation gtf
+## download from ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_28/GRCh37_mapping/gencode.v28lift37.annotation.gtf.gz
+## and gunzip into db/gencode.v28lift37.annotation.gtf
+# ref_annot_GENCODE='db/gencode.v28lift37.annotation.gtf'
+# pseudo_gene='SBDSP'
+# perl src/gene2fa_combine_GENCODE.pl $true_gene,$pseudo_gene $combine_ref_dir $ref_fa $ref_annot_GENCODE
+## optional II, if manually prepare bed file ($ref_annot is not required)
 # parental_gene_bed='demo/SBDS_ref/SBDS.bed'
 # pseudo_gene_bed='demo/SBDS_ref/SBDSP1.bed'
 # perl src/gene2fa_combine_manualBed.pl $parental_gene,$pseudo_gene $parental_gene_bed,$pseudo_gene_bed $combine_ref_dir $ref_fa 
+###
+
 muscle -in $combine_ref_dir/combine.fa -out $combine_ref_dir/combine.aln -clw
 perl src/common_ref.pl $combine_ref_dir/combine.aln $parental_gene $total_gene_num $combine_ref_dir/$parental_gene.bed $combine_ref_dir/combine_mod.info $combine_ref_dir/combine_mod.fa $combine_ref_dir/combine_mod_region.bed
 
