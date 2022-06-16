@@ -9,7 +9,8 @@ $out2 = $ARGV[5];
 $out3 = $ARGV[6];
 $tmp = `cat $gene_bed | tail -n 1`;chomp($tmp);
 @info = split "\t",$tmp;
-##
+## 
+#perl src/common_ref.pl $combine_ref_dir/combine.aln $true_gene 2 $combine_ref_dir/$true_gene.bed $combine_ref_dir/combine_mod.info $combine_ref_dir/combine_mod.fa $combine_ref_dir/combine_mod_region.bed
 open F,$aln or die $!;
 $line_num = 0;
 $all_seq = "";
@@ -20,21 +21,20 @@ while(<F>){
 	$line_num++;
 	if($line_num<3){next;}
 	$line_e = ($line_num-3)%$each;
-	if($line_e == 1){ ## first one
-		if($line =~ /^$gene\s+([A-Za-z-]+)/){
-			$seq = $1;
-			$all_seq .= $seq;
-		}	
+	if($line_e == $each-1){ ## last one
+		if($line =~ /^                (.*)$/){
+			$mark = $1;
+			$all_mark .= $mark;
+		}
 	}else{
-		if($line_e == $each-1){ ## last one
-			if($line =~ /^                (.*)$/){
-				$mark = $1;
-				$all_mark .= $mark;
-			}
-		}else{
-			if($line =~ /^(.*)\s+([A-Za-z-]+)/){
+		if($line_e < $each-1){ ## first one ## modify
+			if($line =~ /^$gene\s+([A-Za-z-]+)/){
+				$seq = $1;
+				$all_seq .= $seq;
+			}elsif($line =~ /^(.*)\s+([A-Za-z-]+)/){
 				$other_gene = $1;
 				$seq = $2;
+				$other_gene =~ s/\s//g;
 				$all_other_seq{$other_gene} .= $seq;
 			}	
 		}
@@ -47,11 +47,12 @@ close F;
 foreach $other_gene(@all_other_gene){
 	@{$other_gene} = split "",$all_other_seq{$other_gene};		
 }
+#print $#all_seq."\t$#all_mark\n";
 ################
 open O1,">$out1";
 open O2,">$out2";
 open O3,">$out3"; ## 0-based
-print O1 "#combine_pos\tori_pos\tgenome_pos\t$gene\t$n\t$mark\n";
+print O1 "#combine_pos\tori_pos\tgenome_pos\t$gene\t$n\tmark\n";
 $ori_i = 0;
 $strand = $info[5];
 if($strand eq "-"){$start_pos = $info[2];}else{$start_pos=$info[1];}
@@ -72,16 +73,18 @@ foreach $i (0..$#all_seq){
 		$final_seq .= "N";
 	}
 	if($ori_i == 1){$mod_start = $i-1;next;}
-	if($mod_start == 0){next;}
+#print $ori_i."\t".$mod_start."\t".$all_mark[$i]."\t".$all_mark[$i-1]."\n";
+#	if($mod_start == 0){next;}
 	if($all_mark[$i] ne "*" && $all_mark[$i-1] eq "*"){
 		$mod_end = $i-1;
-		print O3 "chr\t$mod_start\t$mod_end\tOID_$mod_start-$mod_end\n";
+		if($mod_start>0){print O3 "chr\t$mod_start\t$mod_end\tOID_$mod_start-$mod_end\n";}
 		$mod_start = $i-1;
 	}
 	if($all_mark[$i] eq "*" && $all_mark[$i-1] ne "*"){
 		$mod_end = $i-1;
-		if($strand eq "-"){$real_pos_use = $real_pos+1;}else{$real_pos_use = $real_pos-1;}
-		print O3 "chr\t$mod_start\t$mod_end\tTID_$real_pos_use\n";
+		$region_len=$mod_end-$mod_start;
+		if($strand eq "-"){$real_pos_use = $real_pos+1;}else{$real_pos_use = $real_pos-$region_len;}
+		if($mod_start>0){print O3 "chr\t$mod_start\t$mod_end\tTID_$real_pos_use\n";}
 		$mod_start = $i-1;
 	}
 }

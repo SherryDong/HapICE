@@ -24,22 +24,28 @@ library(RColorBrewer)
 #' }
 #' @export
 HapICE.prepare_dataset <- function(mat=NULL,mod_region=NULL,mod_info=NULL,int_pos=NULL){
+  #if(mod_info$genome_pos[1] < mod_info$genome_pos[nrow(mod_info)]){strand='+'}else{strand='-'ult/$sample_name.res.pdf  $result/$sample_name.res.txt
   int_pos <- as.numeric(unlist(strsplit(int_pos,',')))
   int_region <- sprintf('TID_%s',int_pos)
   r1 <- mod_region; d1 <- mat; f1 <- mod_info;
-	w1 <- which(int_region %in% r1$V4)
-	int_pos <- int_pos[w1]; int_region <- int_region[w1]
-	if(length(w1)==0) stop('no matched interesting position !')
+  w1 <- which(int_region %in% r1$V4)
+  int_pos <- int_pos[w1]; int_region <- int_region[w1]
+  if(length(w1)==0) stop('no matched interesting position !')
   r1$colname <- r1$V4
   r1$colname <- gsub('-','.',r1$colname)
   rownames(r1) <- r1$colname
-  r1 <- r1[which(r1$colname %in% colnames(d1)),]
+  r1 <- r1[which(r1$colname %in% colnames(d1)),];
   d2 <- d1[,r1$colname]
+  w1 <- which(int_region %in% r1$V4);
+  int_pos <- int_pos[w1]; int_region <- int_region[w1]
+  ##
   int_region_len <- r1[int_region,3]-r1[int_region,2]
   ref_nt <- do.call(rbind,lapply(1:length(int_region),function(x){
     xp <- int_pos[x]
     xl <- int_region_len[x]
     x1 <- f1[which(f1$genome_pos %in% xp:(xp+xl-1)),]
+    #if(strand == "+") {x1 <- f1[which(f1$genome_pos %in% (xp-xl+1):xp),]}
+    #if(strand == "-") {x1 <- f1[which(f1$genome_pos %in% xp:(xp+xl-1)),]}
     x2 <- c(int_region[x],paste(x1[,4],collapse=''),paste(x1[,5],collapse=''),x1[1,3])
     names(x2) <- c('region',colnames(f1)[c(4,5,3)])
     x2
