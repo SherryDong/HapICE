@@ -80,7 +80,7 @@ foreach $i (0..$#all_seq){
 	}
 	if($all_mark[$i] eq "*" && $all_mark[$i-1] ne "*"){
 		$mod_end = $i-1;
-		if($strand eq "-"){$real_pos_use = $real_pos+1;}else{$real_pos_use = $real_pos;}
+		if($strand eq "-"){$real_pos_use = $real_pos+1;}else{$real_pos_use = $real_pos-1;}
 		print O3 "chr\t$mod_start\t$mod_end\tTID_$real_pos_use\n";
 		$mod_start = $i-1;
 	}
