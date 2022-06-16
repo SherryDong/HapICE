@@ -64,7 +64,7 @@ foreach $i (0..$#all_seq){
 	}
 	$n = join "\t",@n;
 	if($all_seq[$i] ne '-'){$ori_i++;}
-	if($strand eq "-"){$real_pos = $start_pos-$ori_i+1;}else{$real_pos = $start_pos+$ori_i-1;}
+	if($strand eq "-"){$real_pos = $start_pos-$ori_i+1;}else{$real_pos = $start_pos+$ori_i;}
 	print O1 $i."\t$ori_i\t$real_pos\t".$all_seq[$i]."\t$n\t".$all_mark[$i]."\n";
 	if($all_mark[$i] eq "*"){
 		$final_seq .= $all_seq[$i];
@@ -80,7 +80,7 @@ foreach $i (0..$#all_seq){
 	}
 	if($all_mark[$i] eq "*" && $all_mark[$i-1] ne "*"){
 		$mod_end = $i-1;
-		if($strand eq "-"){$real_pos_use = $real_pos+1;}else{$real_pos_use = $real_pos-1;}
+		if($strand eq "-"){$real_pos_use = $real_pos+1;}else{$real_pos_use = $real_pos;}
 		print O3 "chr\t$mod_start\t$mod_end\tTID_$real_pos_use\n";
 		$mod_start = $i-1;
 	}
