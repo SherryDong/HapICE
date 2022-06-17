@@ -56,6 +56,8 @@ HapICE.prepare_dataset <- function(mat=NULL,mod_region=NULL,mod_info=NULL,int_po
   group_name <- ref_nt[,ncol(ref_nt)]
   pre_define <- colorRampPalette(brewer.pal(8,'Spectral'))(length(group_info))
   names(pre_define) <- names(group_info)
+  rownames(group_info) <- colnames(all_mat)
+  names(group_name) <- colnames(all_mat)
   return(list(all_mat=all_mat,group_info=group_info,group_name=group_name,pre_define=pre_define))
 }
 ###########################################
@@ -432,6 +434,7 @@ HapICE.infer_Haplotype <- function(all_mat,group_info,use_site=NULL,
                          adjust_per=TRUE,perm_k=5000,perm_strategy='frequency',
                          remove_char='.',min_diff=1e-30,min_frequency=0.01){
   ##
+  ori_group_info <- group_info;
   w1 <- apply(all_mat,1,function(x)length(setdiff(unique(x),remove_char)))
   all_mat <- all_mat[which(w1>0),]
   if(is.null(use_site)==FALSE){
@@ -490,8 +493,8 @@ HapICE.infer_Haplotype <- function(all_mat,group_info,use_site=NULL,
   for(each_t in 2:max_t){
     use_mat <- get_valid(all_mat,each_t)
     use_res <- result_t[[each_t-1]]
-    tmp1 <- use_res$seq
-    tmp2 <- sort(table(use_mat[,each_t]),decreasing = T)
+    tmp1 <- use_res$seq ## previous position
+    tmp2 <- sort(table(use_mat[,each_t]),decreasing = T) ## real observed seq in the position
     tmp2 <- names(tmp2)
     res <- list(seq=list(),trace=list(),record=list(),prob=c(),check_prob=c(),support_read = c())
     ## get all possible haplotype --> get read to hap matrix
@@ -506,6 +509,12 @@ HapICE.infer_Haplotype <- function(all_mat,group_info,use_site=NULL,
           compare_twoSeq_count(ref,x,min_overlap=min(min_overlap,each_t))
         })
         obs1 <- obs[which(obs>0)]
+		if(length(obs1)==0){ ## for conditions with no read support 1st and 2nd, start from 2nd
+        	obs <- apply(all_mat[,1:each_t,drop=F],1,function(x){
+          		compare_twoSeq_count(ref,x,min_overlap=1)
+       		})
+        	obs1 <- obs[which(obs>0)]
+		}
         read2hap[names(obs1),hap_count] <- obs1
         res$seq[[hap_count]] <- ref
         res$trace[[hap_count]] <- c(result_t[[each_t-1]]$trace[[i]],
@@ -529,9 +538,11 @@ HapICE.infer_Haplotype <- function(all_mat,group_info,use_site=NULL,
     res$seq <- res$seq[w1]; res$trace <- res$trace[w1]; 
     res$prob <- res$prob[w1]; res$record <- res$record[w1];
     res$support_read <- res$support_read[w1]
-    for(i in 1:length(res$record)){
-      res$record[[i]] <- c(res$record[[i]],i)
-    }
+    if(length(res$record)>0){
+    	for(i in 1:length(res$record)){
+      	  res$record[[i]] <- c(res$record[[i]],i)
+    	}
+	}
     ## filter top
     ori_o <- order(res$prob,decreasing = T)
     prob_o <- 1-cumsum(res$prob[ori_o])
@@ -559,7 +570,21 @@ HapICE.infer_Haplotype <- function(all_mat,group_info,use_site=NULL,
   if(adjust_per==TRUE){
     result_t[[max_t]]$prob <- result_t[[max_t]]$prob/sum(result_t[[max_t]]$prob)
   }
+  #if(is.null(res$record[[1]])==TRUE){ ## if no reads support 1st and 2nd position,remove 1st position
+  #	message('No reads support the 1st and 2nd position, remove the 1st position and re-run!')
+  #  if(is.null(use_site)==TRUE) use_site <- colnames(all_mat)[2:ncol(all_mat)]
+  #  if(is.null(use_site)==FALSE) use_site <- setdiff(use_site,colnames(all_mat)[1])
+  #	result_t <- HapICE.infer_Haplotype(all_mat=all_mat[,2:ncol(all_mat),drop=F],
+  #                       group_info=ori_group_info[2:nrow(group_info),,drop=F],
+  #						 use_site=use_site,
+  #                       min_overlap=min_overlap,check_thre=check_thre,top_each=top_each,
+  #                       adjust_per=adjust_per,perm_k=perm_k,perm_strategy=perm_strategy,
+  #                       remove_char=remove_char,min_diff=min_diff,min_frequency=min_frequency)
+  #  return(result_t)
+  #}
   ## output
+  names(result_t) <- rownames(ori_group_info)
+  message(sprintf('Output for position: %s',paste(names(result_t),collapse=',')))
   return(result_t)
 }
 
@@ -584,6 +609,7 @@ HapICE.infer_Haplotype <- function(all_mat,group_info,use_site=NULL,
 HapICE.plot_inferHaplotype <- function(result_t,prob_thre=0.01,group_name=NULL,
                               consider_site_per=FALSE){
   par(mar=c(2,2,5,8))
+  group_name <- group_name[names(result_t)]
   if(consider_site_per==TRUE){
     tmp1 <- lapply(result_t, function(x){
       w1 <- which(x$prob>=prob_thre)
