@@ -235,11 +235,13 @@ HapICE.plot_adjacentCombination <- function(all_mat,top_n=3,each_width=0.25,
       if(only_use_group==TRUE){
         tmp2 <- tmp1[c(w1)]; names(tmp2) <- w1; tmp1 <- tmp2;
         tmp1c <- names(group_info)
+        w2 <- which(tmp1>0);tmp1<-tmp1[w2];tmp1c<-tmp1c[w2] ## 2022-06-21: remove type with count 0
       }else{
         tmp2 <- tmp1[c(w1,setdiff(names(tmp1),w1))]
         names(tmp2) <- c(w1,setdiff(names(tmp1),w1))
         tmp1 <- tmp2
         tmp1c <- c(names(group_info),setdiff(names(tmp1),w1))
+        w2 <- which(tmp1>0);tmp1<-tmp1[w2];tmp1c<-tmp1c[w2] ## 2022-06-21: remove type with count 0
       }
     }
     tmp1[which(is.na(tmp1)==T)] <- 0;
@@ -281,6 +283,8 @@ HapICE.plot_adjacentCombination <- function(all_mat,top_n=3,each_width=0.25,
         per1_part <- inter_count/length(which(mat1[,i]==all_top[[i]][j1]))
         per1 <- inter_count/length(all_valid[[i]])*scale_w1[i]
         per2 <- inter_count/length(all_valid[[i+1]])*scale_w1[i+1]
+ 	#print(c(i,j1,j2,count_link,per1_part,per1,per2))
+		if(is.nan(count_link) == T | is.nan(per1_part) == T){next}
         if(count_link > count_link_thre & per1_part>part_thre){
           Fy0 <- hap_end[[i]][j1]-start_left[j1]
           Fy1 <- hap_end[[i+1]][j2]-end_right[j2]
